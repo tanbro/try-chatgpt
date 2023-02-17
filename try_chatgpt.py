@@ -25,6 +25,7 @@ def main():
 
             prompt_string = dedent(f"""
             Q: {input_string}
+
             A:
             """).strip()
 
