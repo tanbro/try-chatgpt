@@ -2,9 +2,9 @@ from os import environ, getenv
 from textwrap import dedent
 
 import openai
+import rich
+import rich.console
 from dotenv import load_dotenv
-from rich import print
-from rich.console import Console
 
 
 def main():
@@ -34,18 +34,18 @@ def main():
 
             print()
 
-            ans_string = ""
+            pred_string = ""
             ans_prefix = "🤖 :"
-            console = Console()
+            console = rich.console.Console()
             with console.status(ans_prefix) as status:
                 stream = openai.Completion.create(
                     prompt=prompt_string,
                     **kdargs
                 )
                 for x in stream:
-                    ans_string += x["choices"][0]["text"]  # type: ignore
-                    status.update(f"{ans_prefix} {ans_string}")
-            print(f"🤖💬 : {ans_string}")
+                    pred_string += x["choices"][0]["text"]  # type: ignore
+                    status.update(f"{ans_prefix} {pred_string}")
+            rich.print(f"🤖💬 : {pred_string}")
 
             print()
             print('━'*30)
