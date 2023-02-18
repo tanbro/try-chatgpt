@@ -3,6 +3,8 @@ from textwrap import dedent
 
 import openai
 from dotenv import load_dotenv
+from rich import print
+from rich.console import Console
 
 
 def main():
@@ -30,21 +32,23 @@ def main():
             """).strip()
 
             print()
-            print("🤖💬 : ", end="", flush=True)
 
-            stream = openai.Completion.create(
-                prompt=prompt_string,
-                **kdargs
-            )
-
-            is_empty = True
-            for x in stream:
-                s = x["choices"][0]["text"]  # type: ignore
-                if is_empty and s.strip():
-                    is_empty = False
-                    s = s.lstrip()
-                if not is_empty:
-                    print(s, end="", flush=True)
+            console = Console()
+            ans_prefix = "🤖 : "
+            with console.status(ans_prefix) as status:
+                ans_string = ""
+                stream = openai.Completion.create(
+                    prompt=prompt_string,
+                    **kdargs
+                )
+                for x in stream:
+                    s = x["choices"][0]["text"]  # type: ignore
+                    if ans_string:
+                        ans_string += s
+                    else:
+                        ans_string += s.lstrip()
+                    status.update(f"{ans_prefix} {ans_string}")
+            print(f"🤖💬 : {ans_string}")
 
             print()
             print('━'*30)
