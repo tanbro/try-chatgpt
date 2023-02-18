@@ -16,17 +16,24 @@
 
 - Windows (Windows 10 及以上)
 
-  1. 在开始菜单找到微软的软件商店 Microsoft Store，并打开
-  1. 在软件商店的搜索栏输入 python ，并回车或点击搜索按钮
-  1. 在搜索结果中选择 `Python3.7`，`Python3.8`，`Python3.9`，`Python3.10`，`Python3.11` 中的任何一个，然后选择安装，并等待安装其完成。
+  1. 在开始菜单找到并打开微软的软件商店 `Microsoft Store`
+  1. 在软件商店的搜索栏输入 `python` ，按回车或点搜索按钮
+  1. 在搜索结果中选择 `Python3.7`，`Python3.8`，`Python3.9`，`Python3.10`，`Python3.11` 中的任一个安装
 
-  1. 打开命令提示符或 Windows 终端，输入以下命令:
+  1. 打开命令提示符或 Windows 终端，输入:
 
      ```powershell
      python --version     
      ```
 
-     如果输出 `Python 3.10.8` 这样的结果，说明安装成功。
+     如果输出类似
+
+     ```powershell-interactive
+     C:\> python --version
+     Python 3.10.8
+     ```
+
+     这样的结果，说明安装成功。
 
 - MacOS: 懒得写了
 - 其它: 懒得写了
@@ -49,8 +56,6 @@
 - 其它: 懒得写了
 
 ### 运行
-
-在这个程序源码目录打开终端/命令提示符，输入以下命令:
 
 - Windows
 
