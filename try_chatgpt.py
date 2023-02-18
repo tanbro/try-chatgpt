@@ -47,7 +47,7 @@ def main():
                         ans_string += s
                     else:
                         ans_string += s.lstrip()
-                    status.update(f"{ans_prefix} {ans_string}")
+                    status.update(f"{ans_prefix}{ans_string}")
             print(f"🤖💬 : {ans_string}")
 
             print()
