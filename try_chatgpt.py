@@ -2,7 +2,6 @@ from os import environ, getenv
 from textwrap import dedent
 
 import openai
-import rich
 import rich.console
 from dotenv import load_dotenv
 
@@ -45,7 +44,7 @@ def main():
                 for x in stream:
                     pred_string += x["choices"][0]["text"]  # type: ignore
                     status.update(f"{ans_prefix} {pred_string}")
-            rich.print(f"🤖💬 : {pred_string}")
+            print(f"🤖💬 : {pred_string}")
 
             print()
             print('━'*30)
