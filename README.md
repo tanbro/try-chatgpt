@@ -4,7 +4,10 @@
 
 这是一个在命令行中运行(CLI)的很小的体验性质的程序。
 
-他调使用 [OpenAI][] 的 `text-davinci-003` 模型（未作任何 finetune），根据用户输入，输出最多 2048 个 token 长度的预测结果。
+他调使用 [OpenAI][] 的 `text-davinci-003` 模型（未作任何 finetune），根据用户输入尽心续写。
+
+由于 [OpenAI][] 尚未开放 Chat 接口,且本例没有针对多轮次对话做任何特殊处理,所以本例实际上是 `GPT` 续写,而**不是** `ChatGPT` 对话!
+使用者可以简单的将它视作一个 QA 对答 AI,而不是对话 AI.
 
 ## How to use
 
@@ -67,11 +70,6 @@
 
 - MacOS: 懒得写了
 - 其它: 懒得写了
-
-## NOTICE
-
-收到程序包的人，你会在 `.env` 文件中找到我个人的 [OpenAI][] API KEY，每次调用都在扣除作者的账户费用。
-所以请使用者尊重作者的隐私和权益，不传播，不滥用！
 
 [OpenAI]: https://openai.com/ "OpenAI is an AI research and deployment company."
 [Python]: https://www.python.org/ "Python is a programming language that lets you work quickly and integrate systems more effectively"

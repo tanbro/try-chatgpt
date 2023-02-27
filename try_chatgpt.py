@@ -2,22 +2,36 @@ from os import environ, getenv
 from textwrap import dedent
 from string import Template
 
+try:
+    import readline
+except ImportError:
+    pass
+
 import openai
 import rich.console
+import rich.markdown
 from dotenv import load_dotenv
 
 
-"以下是与人工智能助手的对话。这位助理乐于助人、富有创造力、聪明而且非常友好。"
-
 PROMPT_TPL = Template(dedent("""
-    Marvo 是一个聊天机器人，他不情愿地、充满讽刺意味的与用户交谈。
-
-    
-    用户: ${input}
+    Q: ${input}
 
 
-    Marvo:
-""").strip())
+    A:
+""").lstrip())
+
+
+def show_readme(console):
+    for fname in ("README.md", "NOTICE.md", "AUTHORS.md"):
+        try:
+            with open(fname) as f:
+                md = rich.markdown.Markdown(f.read())
+                print()
+                console.print(md)
+                print()
+            console.input("[green]按[bold]『Enter』[/]键继续 ...[/]")
+        except FileNotFoundError:
+            pass
 
 
 def main():
@@ -25,24 +39,30 @@ def main():
     openai.api_key = environ["OPENAI_API_KEY"]
     #
     kdargs = dict(
-        model=getenv("OPENAI_COMPLETION_MODEL") or "text-ada-001",
+        model=getenv("OPENAI_COMPLETION_MODEL") or "text-davinci-003",
         stream=True,
     )
     max_tokens = getenv("OPENAI_COMPLETION_MAX_TOKENS")
     if max_tokens:
         kdargs.update(max_tokens=int(max_tokens))  # type: ignore
     #
+    console = rich.console.Console()
+    #
+    show_readme(console)
+    print()
+    rich.print("[green]现在开始 GPT QA 吧! (Ctrl+c 退出)[/]")
+    print()
+    console.rule("")
+    print()
+    #
     try:
         while True:
-            input_string = input("🧑💬 : ").strip()
+            input_string = console.input("🧑💬 : ").strip()
             if not input_string:
                 continue
 
-            print()
-
             pred_string = ""
             ans_prefix = "🤖 :"
-            console = rich.console.Console()
             with console.status(ans_prefix) as status:
                 stream = openai.Completion.create(
                     prompt=PROMPT_TPL.safe_substitute(input=input_string),
@@ -54,7 +74,7 @@ def main():
             print(f"🤖💬 : {pred_string}")
 
             print()
-            print('━'*30)
+            console.rule("")
             print()
 
     except KeyboardInterrupt:
