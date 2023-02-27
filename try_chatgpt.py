@@ -1,6 +1,6 @@
 from os import environ, getenv
-from textwrap import dedent
 from string import Template
+from textwrap import dedent
 
 try:
     import readline
@@ -12,6 +12,7 @@ import rich.console
 import rich.markdown
 from dotenv import load_dotenv
 
+DEFAULT_MODEL = "text-davinci-003"
 
 PROMPT_TPL = Template(dedent("""
     Q: ${input}
@@ -39,7 +40,7 @@ def main():
     openai.api_key = environ["OPENAI_API_KEY"]
     #
     kdargs = dict(
-        model=getenv("OPENAI_COMPLETION_MODEL") or "text-davinci-003",
+        model=getenv("OPENAI_COMPLETION_MODEL") or DEFAULT_MODEL,
         stream=True,
     )
     max_tokens = getenv("OPENAI_COMPLETION_MAX_TOKENS")
