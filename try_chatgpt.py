@@ -50,7 +50,7 @@ def main():
     #
     show_readme(console)
     print()
-    rich.print("[green]现在开始 GPT QA 吧! (Ctrl+c 退出)[/]")
+    console.print("[green]现在开始 GPT QA 吧! (Ctrl+c 退出)[/]")
     print()
     console.rule("")
     print()
@@ -71,7 +71,7 @@ def main():
                 for x in stream:
                     pred_string += x["choices"][0]["text"]  # type: ignore
                     status.update(f"{ans_prefix} {pred_string}")
-            print(f"🤖💬 : {pred_string}")
+            console.print(f"🤖💬 : {pred_string}")
 
             print()
             console.rule("")
