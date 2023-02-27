@@ -48,7 +48,10 @@ def main():
     #
     console = rich.console.Console()
     #
-    show_readme(console)
+    try:
+        show_readme(console)
+    except KeyboardInterrupt:
+        return
     print()
     console.print("[green]现在开始 GPT QA 吧! (Ctrl+c 退出)[/]")
     print()
