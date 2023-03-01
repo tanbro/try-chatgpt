@@ -25,7 +25,7 @@ PROMPT_TPL = Template(dedent("""
 def show_readme(console):
     for fname in ("README.md", "NOTICE.md", "AUTHORS.md"):
         try:
-            with open(fname) as f:
+            with open(fname, encoding="utf8") as f:
                 md = rich.markdown.Markdown(f.read())
                 print()
                 console.print(md)
