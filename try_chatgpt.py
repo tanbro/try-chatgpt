@@ -31,6 +31,7 @@ def show_readme(console):
                 console.print(md)
                 print()
             console.input("[green]按[bold]『Enter』[/]键继续 ...[/]")
+            console.clear()
         except FileNotFoundError:
             pass
 
@@ -54,7 +55,7 @@ def main():
     except KeyboardInterrupt:
         return
     print()
-    console.print("[green]现在开始 GPT QA 吧! (Ctrl+c 退出)[/]")
+    console.print("[green]现在开始 GPT QA 吧! (Ctrl+C 退出)[/]")
     print()
     console.rule("")
     print()
