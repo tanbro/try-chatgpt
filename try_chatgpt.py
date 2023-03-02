@@ -1,6 +1,6 @@
-from os import environ, getenv
-from string import Template
-from textwrap import dedent
+from collections import deque
+from os import environ, getenv, linesep
+from pathlib import Path
 
 try:
     import readline
@@ -14,27 +14,60 @@ from dotenv import load_dotenv
 
 DEFAULT_MODEL = "gpt-3.5-turbo"
 
-PROMPT_TPL = Template(dedent("""
-    Q: ${input}
-
-
-    A:
-""").lstrip())
-
 
 def show_readme(console):
+    s = ""
     for fname in ("README.md", "NOTICE.md", "AUTHORS.md"):
         try:
-            with open(fname, encoding="utf8") as f:
-                md = rich.markdown.Markdown(f.read())
-                print()
-                with console.pager(styles=True):
-                    console.print(md)
-                print()
-            console.input("[green]按[bold]『Enter』[/]键继续 ...[/]")
-            console.clear()
+            if s:
+                s += linesep
+            s += Path(fname, encoding="utf8").read_text()
         except FileNotFoundError:
             pass
+    if s:
+        md = rich.markdown.Markdown(s)
+        print()
+        with console.pager(styles=True):
+            console.print(md)
+        print()
+
+
+def run_chat(console, kdargs):
+    messages = deque(maxlen=3)
+    while True:
+        input_string = console.input("🧑💬 : ").strip()
+        if not input_string:
+            continue
+
+        ans_prefix = "🤖 :"
+        messages.append({
+            "role": "user",
+            "content": input_string,
+        })
+        with console.status(ans_prefix) as status:
+            stream = openai.ChatCompletion.create(
+                messages=list(messages),
+                **kdargs
+            )
+            message = {"role": "", "content": ""}
+            for i, res in enumerate(stream):
+                delta = res["choices"][0]["delta"]  # type: ignore
+                if not delta:
+                    break
+                if i == 0:
+                    role = delta["role"]
+                    status.update(ans_prefix)
+                    message["role"] = role
+                else:
+                    content = delta["content"]
+                    message["content"] = message["content"] + content
+                    status.update(f"{ans_prefix} {message['content']}")
+            console.print(f"🤖💬 : {message['content']}")
+        messages.append(message)
+
+        print()
+        console.rule("")
+        print()
 
 
 def main():
@@ -55,33 +88,17 @@ def main():
         show_readme(console)
     except KeyboardInterrupt:
         return
-    print()
-    console.print("[green]现在开始 GPT QA 吧! (Ctrl+C 退出)[/]")
-    print()
-    console.rule("")
-    print()
+
     #
     try:
-        while True:
-            input_string = console.input("🧑💬 : ").strip()
-            if not input_string:
-                continue
+        print()
+        console.input("[green]按[bold]『Enter』[/]开始, [bold]『Ctrl+C』[/]退出 ...[/]")
+        console.clear()
+        print()
+        console.rule("")
+        print()
 
-            pred_string = ""
-            ans_prefix = "🤖 :"
-            with console.status(ans_prefix) as status:
-                stream = openai.Completion.create(
-                    prompt=PROMPT_TPL.safe_substitute(input=input_string),
-                    **kdargs
-                )
-                for x in stream:
-                    pred_string += x["choices"][0]["text"]  # type: ignore
-                    status.update(f"{ans_prefix} {pred_string}")
-            console.print(f"🤖💬 : {pred_string}")
-
-            print()
-            console.rule("")
-            print()
+        run_chat(console, kdargs)
 
     except KeyboardInterrupt:
         pass
