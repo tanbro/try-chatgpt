@@ -2,17 +2,17 @@ from collections import deque
 from os import environ, getenv, linesep
 from pathlib import Path
 
-try:
-    import readline
-except ImportError:
-    pass
-
 import openai
 import rich.console
 import rich.markdown
 from dotenv import load_dotenv
 
 DEFAULT_MODEL = "gpt-3.5-turbo"
+
+AVATAR = {
+    "user": "🧑",
+    "assistant": "🤖",
+}
 
 
 def show_readme(console):
@@ -35,21 +35,21 @@ def show_readme(console):
 def run_chat(console, kdargs):
     messages = deque(maxlen=3)
     while True:
-        input_string = console.input("🧑💬 : ").strip()
+        input_string = console.input(f"{AVATAR['user']}💬 : ").strip()
         if not input_string:
             continue
 
-        ans_prefix = "🤖 :"
+        ans_prefix = f"{AVATAR['assistant']} : "
         messages.append({
             "role": "user",
             "content": input_string,
         })
         with console.status(ans_prefix) as status:
+            message = {"role": "", "content": ""}
             stream = openai.ChatCompletion.create(
                 messages=list(messages),
                 **kdargs
             )
-            message = {"role": "", "content": ""}
             for i, res in enumerate(stream):
                 delta = res["choices"][0]["delta"]  # type: ignore
                 if not delta:
@@ -59,10 +59,9 @@ def run_chat(console, kdargs):
                     status.update(ans_prefix)
                     message["role"] = role
                 else:
-                    content = delta["content"]
-                    message["content"] = message["content"] + content
+                    message["content"] = message["content"] + delta["content"]
                     status.update(f"{ans_prefix} {message['content']}")
-            console.print(f"🤖💬 : {message['content']}")
+            console.print(f"{AVATAR['assistant']}💬 : {message['content']}")
         messages.append(message)
 
         print()
@@ -84,11 +83,7 @@ def main():
     #
     console = rich.console.Console()
     #
-    try:
-        show_readme(console)
-    except KeyboardInterrupt:
-        return
-
+    show_readme(console)
     #
     try:
         print()
