@@ -12,7 +12,7 @@ import rich.console
 import rich.markdown
 from dotenv import load_dotenv
 
-DEFAULT_MODEL = "text-davinci-003"
+DEFAULT_MODEL = "gpt-3.5-turbo"
 
 PROMPT_TPL = Template(dedent("""
     Q: ${input}
