@@ -28,7 +28,8 @@ def show_readme(console):
             with open(fname, encoding="utf8") as f:
                 md = rich.markdown.Markdown(f.read())
                 print()
-                console.print(md)
+                with console.pager(styles=True):
+                    console.print(md)
                 print()
             console.input("[green]按[bold]『Enter』[/]键继续 ...[/]")
             console.clear()
