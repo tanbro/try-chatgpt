@@ -53,6 +53,7 @@ def run_chat(console, kdargs):
         input_string = console.input(f"{AVATAR['user']}💬 : ").strip()
         if not input_string:
             continue
+        print()
 
         ans_prefix = f"{AVATAR['assistant']} : "
         messages.append({
