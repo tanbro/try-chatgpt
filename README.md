@@ -2,12 +2,7 @@
 
 ## Summary
 
-这是一个在命令行中运行(CLI)的很小的体验性质的程序。
-
-它默认调使用 [OpenAI][] 的 `gpt-3.5-turbo` 模型（未作任何 finetune），根据用户输入进行续写。
-
-由于 [OpenAI][] 尚未开放 Chat 接口,且本例没有针对多轮次对话做任何特殊处理,所以本例实际上是 `GPT` 续写,而**不是** `ChatGPT` 对话!
-使用者可以简单的将它视作一个 QA 对答 AI,而不是对话 AI.
+它包好了几个了在命令行中(CLI)试用 [OpenAI][] LM 的简单小例子，供体验和评估用。
 
 ## How to use
 
@@ -65,7 +60,7 @@
   在这个程序源码目录打开命令提示符或 Windows 终端，输入以下命令:
 
   ```powershell
-  python try_chatgpt.py
+  python <例子文件名>.py
   ```
 
 - MacOS: 懒得写了

@@ -1,3 +1,13 @@
+"""
+这是一个在命令行中运行(CLI)的很小的体验性质的程序。
+
+它使用 [OpenAI][] 的 `gpt-3.5-turbo` 对话模型与用户进行对话。
+
+---
+
+[OpenAI]: https://openai.com/ "OpenAI is an AI research and deployment company."
+"""
+
 from collections import deque
 from os import environ, getenv, linesep
 from pathlib import Path
@@ -10,29 +20,34 @@ from dotenv import load_dotenv
 DEFAULT_MODEL = "gpt-3.5-turbo"
 
 AVATAR = {
+    "system": "🖥️",
     "user": "🧑",
     "assistant": "🤖",
 }
 
 
-def show_readme(console):
-    s = ""
-    for fname in ("README.md", "NOTICE.md", "AUTHORS.md"):
+def show_doc(console):
+    s = __doc__
+    for fname in ("NOTICE.md", "AUTHORS.md"):
         try:
-            if s:
-                s += linesep
-            s += Path(fname, encoding="utf8").read_text()
+            s += linesep + Path(fname, encoding="utf8").read_text()
         except FileNotFoundError:
             pass
-    if s:
-        md = rich.markdown.Markdown(s)
-        print()
-        with console.pager(styles=True):
-            console.print(md)
-        print()
+    print()
+    md = rich.markdown.Markdown(s)
+    console.print(md)
+    print()
 
 
 def run_chat(console, kdargs):
+    system_content = console.input(
+        f"[green]输入 [bold]system[/] 设定 : [/]").strip()
+    system_message = {"role": "system",
+                      "content": system_content} if system_content else None
+    print()
+    console.rule("")
+    print()
+    #
     messages = deque(maxlen=3)
     while True:
         input_string = console.input(f"{AVATAR['user']}💬 : ").strip()
@@ -44,10 +59,12 @@ def run_chat(console, kdargs):
             "role": "user",
             "content": input_string,
         })
+        messages_list = [system_message] if system_message else []
+        messages_list.extend(messages)
         with console.status(ans_prefix) as status:
             message = {"role": "", "content": ""}
             stream = openai.ChatCompletion.create(
-                messages=list(messages),
+                messages=messages_list,
                 **kdargs
             )
             for i, res in enumerate(stream):
@@ -72,6 +89,9 @@ def run_chat(console, kdargs):
 def main():
     load_dotenv()
     openai.api_key = environ["OPENAI_API_KEY"]
+    proxy = getenv("OPENAI_PROXY")
+    if proxy:
+        openai.proxy = proxy
     #
     kdargs = dict(
         model=getenv("OPENAI_COMPLETION_MODEL") or DEFAULT_MODEL,
@@ -83,7 +103,7 @@ def main():
     #
     console = rich.console.Console()
     #
-    show_readme(console)
+    show_doc(console)
     #
     try:
         print()
