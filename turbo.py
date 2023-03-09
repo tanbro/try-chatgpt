@@ -30,7 +30,7 @@ def show_doc(console):
     s = __doc__
     for fname in ("NOTICE.md", "AUTHORS.md"):
         try:
-            s += linesep + Path(fname, encoding="utf8").read_text()
+            s += linesep + Path(fname).read_text(encoding="utf8")
         except FileNotFoundError:
             pass
     print()
